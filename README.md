@@ -1,3 +1,26 @@
+> 🛠️ **들어가며**
+> 
+>테스트 코드 작성과 추가 기능 구현이 거의 되지 않은 상태입니다. 주말 동안 열심히 시도해 볼테니 혹시 이 메세지를 보신다면 아직 열심히 수정 중인 상태이니 조금만 대충 봐주시길 바랍니다ㅠ
+
+> 🥔**진행상황**
+> 
+>  ❗***필수 구현 기능***❗
+> - [X] **❗좋아요 추가하기**
+> - [X]  **❗내가 좋아하는 게시글 목록 조회기능 추가하기**
+> - [X]  **❗내가 좋아하는 댓글 목록 조회기능 추가하기**
+> - [ ]  **❗프로필에 내가 좋아요한 게시글 수/댓글 수 응답필드 추가하기** 
+>
+> 
+>  ✨***추가 구현 기능***✨
+> - [X]  **✨팔로우 기능 추가**
+> - [ ]  **✨팔로워 게시글 목록 조회기능 추가**
+> - [ ]  **✨팔로워 게시글 목록 조회 기능에 정렬 기준 추가**
+> 
+> 
+> 🏆 ***명예의 전당***🏆
+> - [ ]  **🏆팔로워 TOP 10 목록 조회기능 추가**
+> - [ ]  **🏆팔로워 게시글 목록 조회 기능에 필터 추가**
+
 
 > 🚩 **Requirement:  과제에 요구되는 사항이에요**
 
@@ -33,10 +56,53 @@
     - 사용자가 게시물이나 댓글에 좋아요를 남기거나 취소할 수 있습니다.
     - 본인이 작성한 게시물과 댓글에 좋아요를 남길 수 없습니다.
     - 같은 게시물에는 사용자당 한 번만 좋아요가 가능합니다.
+  
+    ```java
+        public LikeResponseDto createLikeBoard(Long id, User user) {
+        
+                Board board = boardRepository.findById(id).orElseThrow(
+                        () -> new CustomException(ErrorCode.NOT_FOUND)
+                );
+                
+                // 본인이 작성한 게시물에 대한 예외처리
+                if (Objects.equals(board.getUser().getId(), user.getId())) {
+                    throw new CustomException(ErrorCode.LIKE_ME);
+                } 
+                
+                // 이미 좋아요한 게시물에 대한 예외처리
+                if (likeBoardRepository.findByUserIdAndBoardId(user.getId(), board.getId()).isPresent()) {
+                    throw new CustomException(ErrorCode.ALREADY_LIKE);
+                }
+                
+                // 좋아요 게시물 엔티티 생성
+                LikeBoard likeBoard = LikeBoard.builder()
+                        .user(user)
+                        .board(board)
+                        .build();
+                
+                // 저장 및 게시물 좋아요 정보 업데이트
+                likeBoardRepository.save(likeBoard);
+                board.updateLikesCount();
+                boardRepository.save(board);
+                return new LikeResponseDto(likeBoard);
+        
+            }
+    ```
+
   - **게시글 및 댓글 단건조회 응답에 좋아요 개수 추가**
     - 게시글 단건 정보 조회시 게시글의 좋아요 개수필드를 추가합니다.
     - 댓글 단건 정보 조회시 댓글의 좋아요 개수필드를 추가합니다.
-
+    ```java
+    // board.java
+    private int likeCount;
+    
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LikeBoard> likes = new ArrayList<>();
+    
+    public void updateLikesCount() {
+        this.likeCount = this.likes.size();
+    }
+    ``` 
 
 - [X]  **🆕 내가 좋아하는 게시글 목록 조회기능 추가하기**
   - **좋아요 한 게시글 목록 조회 기능**
@@ -45,7 +111,54 @@
     - 기본 정렬은 **생성일자 기준으로 최신순**으로 정렬합니다.
     - 페이지네이션
       - 페이지네이션하여 각 페이지 당 게시물 데이터가 5개씩 나오게 합니다.
-
+    ```java
+    @Override
+    public List<LikeBoard> getLikeBoardsbyUserId(Long userId, long offset, int pagesize) {
+    
+            User user = userRepository.findUserById(userId).orElseThrow(
+                    ()-> new CustomException(ErrorCode.USER_DIFFERENT)
+            );
+    
+            OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, likeBoard.board.createdAt);
+    
+            return jpaQueryFactory.selectFrom(likeBoard)
+                    .where(likeBoard.user.eq(user))
+                    .leftJoin(likeBoard.board).fetchJoin()
+                    .offset(offset)
+                    .limit(pagesize)
+                    .orderBy(orderSpecifier)
+                    .fetch();
+        }
+    ```     
+    ```json
+    {
+        "msg": "좋아요 게시글 조회 성공 (QueryDSL) 🎉",
+        "status": 200,
+        "result": [
+                    {
+                    "nickname": "박셋",
+                    "boardId": 9,
+                    "title": "개웃긴 제목",
+                    "contents": "개웃긴 내용",
+                    "likeCount": 1
+                    },
+                    {
+                    "nickname": "박셋",
+                    "boardId": 6,
+                    "title": "신선한 제목",
+                    "contents": "신선한 내용",
+                    "likeCount": 1
+                    },
+                    {
+                    "nickname": "이둘",
+                    "boardId": 5,
+                    "title": "재미없는 제목",
+                    "contents": "재미없는 내용",
+                    "likeCount": 1
+                    }
+                ]
+    }   
+    ``` 
 
 - [X]  **🆕 내가 좋아하는 댓글 목록 조회기능 추가하기**
   - **좋아요 한 댓글 목록 조회 기능**
@@ -60,6 +173,39 @@
   - **프로필 조회응답에 필드 추가**
     - 프로필 조회시 응답필드에 내가 좋아요한 게시글 수 필드를 추가합니다.
     - 프로필 조회시 응답필드에 내가 좋아요한 댓글 수 필드를 추가합니다.
+```java
+@Override
+    public Long getLikeBoardCount(Long userId) {
+        return jpaQueryFactory.select(likeBoard.count())
+                .from(likeBoard)
+                .where(likeBoard.user.id.eq(userId))
+                .fetchOne();
+    }
+```
+> 의도한 sql문
+>```sql
+>select count(*) from like_board
+>where user_id = 1
+>```
+```json
+{
+  "msg": "프로필 조회 성공 🎉",
+  "status": 200,
+  "result": [
+    {
+      "username": "username1",
+      "roleName": "NORMAL",
+      "nickname": "김하나",
+      "email": "user1@email.com",
+      "profileImg": null,
+      "allUsers": null,
+      "likeBoardCount": null,
+      "likeCommentCount": null
+    }
+  ]
+}
+```
+- 왜인지 알 수 없지만 제대로 값이 들어가지 않는 것 같다.
 
 </details>
 
@@ -68,11 +214,35 @@
 <details>
 <summary> ✨ </summary>
 
-- [ ]  **팔로우 기능 추가**
+- [X]  **팔로우 기능 추가**
   - (지난번 명예의 전당 팔로우 기능과 동일합니다.)
   - 사용자가 다른 사용자에게 팔로우를 하거나 팔로우 취소를 할 수 있습니다.
   - 본인 자신에게는 팔로우를 할 수 없습니다.
   - 한명의 사용자에게는 한번의 팔로우만 할 수 있습니다.
+```java
+// 팔로우 기능
+    public void followUser(Long followingUserId, User follower) {
+        
+        // 사용자가 유효하지 않을때의 예외처리
+        if (followingUserId == null) {
+            throw new CustomException(NOT_FOLLOWED_ID);
+        }
+        if (followingUserId.equals(follower.getId())) {
+            throw new CustomException(NOT_FOLLOW);
+        }
+
+        User followingUser = findUser(followingUserId);
+        
+        // 이미 팔로우 했을 경우 예외처리
+        if (isAlreadyFollowing(followingUserId, follower.getId())) {
+            throw new CustomException(ALREADY_FOLLOW);
+        }
+
+        Follow follow = new Follow(followingUser, follower);
+        followRepository.save(follow);
+
+    }
+```
 
 
 - [ ]  **팔로워 게시글 목록 조회기능 추가**
