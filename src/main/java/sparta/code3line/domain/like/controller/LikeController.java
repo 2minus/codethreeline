@@ -4,15 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.function.EntityResponse;
 import sparta.code3line.common.CommonResponse;
+import sparta.code3line.domain.board.dto.BoardResponseDto;
+import sparta.code3line.domain.board.entity.Board;
+import sparta.code3line.domain.comment.dto.CommentResponseDto;
 import sparta.code3line.domain.like.dto.LikeResponseDto;
 import sparta.code3line.domain.like.service.LikeService;
 import sparta.code3line.security.UserPrincipal;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +34,18 @@ public class LikeController {
                 HttpStatus.OK.value(),
                 responseDto));
 
+    }
+
+    @GetMapping("/boards/likes")
+    public ResponseEntity<CommonResponse<List<BoardResponseDto>>> readLikeBoard(
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        List<BoardResponseDto> responseDtoList = likeService.readLikeBoard(principal.getUser());
+
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponse<>(
+                "좋아요 게시글 조회 성공 🎉",
+                HttpStatus.OK.value(),
+                responseDtoList));
     }
 
     @DeleteMapping("/boards/{id}/likes")
@@ -59,6 +74,18 @@ public class LikeController {
                 HttpStatus.OK.value(),
                 responseDto));
 
+    }
+
+    @GetMapping("/comments/likes")
+    public ResponseEntity<CommonResponse<List<CommentResponseDto>>> readLikeComment(
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        List<CommentResponseDto> responseDtoList = likeService.readLikeComment(principal.getUser());
+
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponse<>(
+                "좋아요 게시글 조회 성공 🎉",
+                HttpStatus.OK.value(),
+                responseDtoList));
     }
 
     @DeleteMapping("/comments/{id}/likes")

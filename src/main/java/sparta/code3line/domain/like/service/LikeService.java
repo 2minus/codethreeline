@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sparta.code3line.common.exception.CustomException;
 import sparta.code3line.common.exception.ErrorCode;
+import sparta.code3line.domain.board.dto.BoardResponseDto;
 import sparta.code3line.domain.board.entity.Board;
 import sparta.code3line.domain.board.repository.BoardRepository;
+import sparta.code3line.domain.comment.dto.CommentResponseDto;
 import sparta.code3line.domain.comment.entity.Comment;
 import sparta.code3line.domain.comment.repository.CommentRepository;
 import sparta.code3line.domain.like.dto.LikeResponseDto;
@@ -15,6 +17,8 @@ import sparta.code3line.domain.like.repository.LikeBoardRepository;
 import sparta.code3line.domain.like.repository.LikeCommentRepository;
 import sparta.code3line.domain.user.entity.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -48,6 +52,18 @@ public class LikeService {
         likeBoard = likeBoardRepository.save(likeBoard);
         return new LikeResponseDto(likeBoard);
 
+    }
+
+    public List<BoardResponseDto> readLikeBoard (User user) {
+
+        List<LikeBoard> LikeBoards = likeBoardRepository.findAllbyUserId(user.getId());
+        List<BoardResponseDto> boards = new ArrayList<>();
+
+        for (LikeBoard likeBoard : LikeBoards) {
+            boards.add(new BoardResponseDto(likeBoard.getBoard()));
+        }
+
+        return boards;
     }
 
     public LikeResponseDto deleteLikeBoard(Long id, User user) {
@@ -86,6 +102,19 @@ public class LikeService {
 
         likeComment = likeCommentRepository.save(likeComment);
         return new LikeResponseDto(likeComment);
+
+    }
+
+    public List<CommentResponseDto> readLikeComment(User user) {
+
+        List<LikeComment> LikeComments = likeCommentRepository.findAllbyUserId(user.getId());
+        List<CommentResponseDto> comments = new ArrayList<>();
+
+        for (LikeComment likeComment : LikeComments) {
+            comments.add(new CommentResponseDto(likeComment.getComment()));
+        }
+
+        return comments;
 
     }
 
