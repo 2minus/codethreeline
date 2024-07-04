@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import sparta.code3line.common.exception.CustomException;
 import sparta.code3line.common.exception.ErrorCode;
 import sparta.code3line.domain.file.FileService;
+import sparta.code3line.domain.like.repository.LikeBoardRepository;
+import sparta.code3line.domain.like.repository.LikeCommentRepository;
 import sparta.code3line.domain.user.dto.ProfileRequestDto;
 import sparta.code3line.domain.user.dto.UserResponseDto;
 import sparta.code3line.domain.user.entity.User;
@@ -24,6 +26,8 @@ public class UserService {
     private final Logger logger = Logger.getLogger(UserService.class.getName());
 
     private final FileService fileService;
+    private final LikeBoardRepository likeBoardRepository;
+    private final LikeCommentRepository likeCommentRepository;
 
 
     @Transactional
@@ -113,7 +117,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USERNAME_NOT_FOUND));
 
-        return new UserResponseDto(user);
+        UserResponseDto response = new UserResponseDto(user);
+        response.updateLikeCount(likeBoardRepository.getLikeBoardCount(userId), likeCommentRepository.getLikeCommentCount(userId));
+
+        return response;
 
     }
 

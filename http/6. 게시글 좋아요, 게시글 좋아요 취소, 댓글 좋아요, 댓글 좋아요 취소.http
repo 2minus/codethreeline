@@ -3,7 +3,7 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "username": "username3",
+  "username": "username1",
   "password": "passWord123!"
 }
 
@@ -13,7 +13,12 @@ Content-Type: application/json
 %}
 
 ### 게시글 좋아요
-POST http://localhost:8080/boards/2/likes
+POST http://localhost:8080/boards/9/likes
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+GET http://localhost:8080/boards/likes/Q?page=0&size=5
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 

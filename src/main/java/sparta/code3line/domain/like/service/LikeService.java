@@ -59,7 +59,7 @@ public class LikeService {
 
     public List<BoardResponseDto> readLikeBoard (User user) {
 
-        List<LikeBoard> LikeBoards = likeBoardRepository.findAllbyUserId(user.getId());
+        List<LikeBoard> LikeBoards = likeBoardRepository.findAllByUserId(user.getId());
         List<BoardResponseDto> boards = new ArrayList<>();
 
         for (LikeBoard likeBoard : LikeBoards) {
@@ -128,7 +128,7 @@ public class LikeService {
 
     public List<CommentResponseDto> readLikeComment(User user) {
 
-        List<LikeComment> LikeComments = likeCommentRepository.findAllbyUserId(user.getId());
+        List<LikeComment> LikeComments = likeCommentRepository.findAllByUserId(user.getId());
         List<CommentResponseDto> comments = new ArrayList<>();
 
         for (LikeComment likeComment : LikeComments) {

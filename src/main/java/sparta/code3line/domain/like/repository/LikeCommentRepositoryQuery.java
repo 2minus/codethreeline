@@ -8,4 +8,5 @@ public interface LikeCommentRepositoryQuery {
 
     List<LikeComment> getLikeCommentsbyUserId(Long userId, long offset, int pagesize);
 
+    Long getLikeCommentCount(Long userId);
 }

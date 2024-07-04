@@ -23,7 +23,7 @@ public class LikeCommentRepositoryImpl implements LikeCommentRepositoryQuery {
     @Override
     public List<LikeComment> getLikeCommentsbyUserId(Long userId, long offset, int pagesize) {
 
-        User user = userRepository.findUserByUserId(userId).orElseThrow(
+        User user = userRepository.findUserById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_DIFFERENT)
         );
 
@@ -37,5 +37,15 @@ public class LikeCommentRepositoryImpl implements LikeCommentRepositoryQuery {
                 .limit(pagesize)
                 .orderBy(orderSpecifier)
                 .fetch();
+    }
+
+
+    @Override
+    public Long getLikeCommentCount(Long userId) {
+
+        return jpaQueryFactory.select(likeComment.count())
+                .from(likeComment)
+                .where(likeComment.user.id.eq(userId))
+                .fetchOne();
     }
 }

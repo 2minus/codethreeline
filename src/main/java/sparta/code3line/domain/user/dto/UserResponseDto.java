@@ -14,6 +14,8 @@ public class UserResponseDto {
     private String email;
     private String profileImg;
     private List<User> allUsers;
+    private Long likeBoardCount;
+    private Long likeCommentCount;
 
     public UserResponseDto(User user){
         this.username = user.getUsername();
@@ -22,6 +24,11 @@ public class UserResponseDto {
         this.email = user.getEmail();
         this.profileImg = user.getProfileImg();
         this.allUsers = null;
+    }
+
+    public void updateLikeCount(Long boardLikes, Long commentLikes) {
+        this.likeBoardCount = boardLikes;
+        this.likeCommentCount = commentLikes;
     }
 
 }

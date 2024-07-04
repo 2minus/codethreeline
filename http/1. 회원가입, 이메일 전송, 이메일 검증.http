@@ -3,10 +3,32 @@ POST http://localhost:8080/users/signup
 Content-Type: application/json
 
 {
-  "username" : "username",
+  "username" : "username1",
   "password" : "passWord123!",
-  "email": "khu4237@gmail.com",
-  "nickname": "nickname"
+  "email": "user1@email.com",
+  "nickname": "김하나"
+}
+
+###
+POST http://localhost:8080/users/signup
+Content-Type: application/json
+
+{
+"username" : "username2",
+"password" : "passWord123!",
+"email": "user2@email.com",
+"nickname": "이둘"
+}
+
+###
+POST http://localhost:8080/users/signup
+Content-Type: application/json
+
+{
+  "username" : "username3",
+  "password" : "passWord123!",
+  "email": "user3@email.com",
+  "nickname": "박셋"
 }
 
 ### 1-2. 이메일 전송
@@ -14,7 +36,23 @@ POST http://localhost:8080/users/email
 Content-Type: application/json
 
 {
-  "email": "khu4237@gmail.com"
+  "email": "user1@email.com"
+}
+
+###
+POST http://localhost:8080/users/email
+Content-Type: application/json
+
+{
+  "email": "user2@email.com"
+}
+
+###
+POST http://localhost:8080/users/email
+Content-Type: application/json
+
+{
+  "email": "user3@email.com"
 }
 
 ### 1-3. 이메일 검증
@@ -22,6 +60,24 @@ PUT http://localhost:8080/users/email/verification
 Content-Type: application/json
 
 {
-  "email": "khu4237@gmail.com",
-  "code": "7y16mYf3"
+  "email": "user1@email.com",
+  "code": "7cyfALeC"
+}
+
+###
+PUT http://localhost:8080/users/email/verification
+Content-Type: application/json
+
+{
+  "email": "user2@email.com",
+  "code": "AudCEux6"
+}
+
+###
+PUT http://localhost:8080/users/email/verification
+Content-Type: application/json
+
+{
+"email": "user3@email.com",
+"code": "tXubULXc"
 }

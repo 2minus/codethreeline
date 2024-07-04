@@ -3,7 +3,7 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "username": "username2",
+  "username": "username1",
   "password": "passWord123!"
 }
 
@@ -13,6 +13,11 @@ Content-Type: application/json
 %}
 
 ### 7-1. 프로필 닉네임 수정(닉네임만 수정 가능) -> multifile 작동 안 됨!!! Postman으로 확인!
+
+### 7-1-1. 프로필 조회
+GET http://localhost:8080/profiles
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 ### 7-2. 프로필 비밀번호 수정
 PATCH http://localhost:8080/profiles/2/pw
