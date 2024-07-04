@@ -12,6 +12,5 @@ public interface LikeBoardRepository extends JpaRepository<LikeBoard, Long>,
         QuerydslPredicateExecutor<LikeBoard>, LikeBoardRepositoryQuery {
 
     Optional<LikeBoard> findByUserIdAndBoardId(Long userId, Long commentId);
-
     List<LikeBoard> findAllbyUserId(Long userId);
 }

@@ -12,8 +12,7 @@ public class BoardResponseDto {
     private Long boardId;
     private String title;
     private String contents;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private int likeCount;
 
     public BoardResponseDto(Board board) {
 
@@ -21,8 +20,7 @@ public class BoardResponseDto {
         this.boardId = board.getId();
         this.title = board.getTitle();
         this.contents = board.getContents();
-        this.createdAt = board.getCreatedAt();
-        this.modifiedAt = board.getModifiedAt();
+        this.likeCount = board.getLikeCount();
 
     }
 

@@ -5,16 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
 import sparta.code3line.common.CommonResponse;
 import sparta.code3line.domain.board.dto.BoardResponseDto;
-import sparta.code3line.domain.board.entity.Board;
 import sparta.code3line.domain.comment.dto.CommentResponseDto;
 import sparta.code3line.domain.like.dto.LikeResponseDto;
 import sparta.code3line.domain.like.service.LikeService;
 import sparta.code3line.security.UserPrincipal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -44,6 +41,20 @@ public class LikeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponse<>(
                 "좋아요 게시글 조회 성공 🎉",
+                HttpStatus.OK.value(),
+                responseDtoList));
+    }
+
+    @GetMapping("/boards/likes/Q")
+    public ResponseEntity<CommonResponse<List<BoardResponseDto>>> readLikeBoardQ(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+
+        List<BoardResponseDto> responseDtoList = likeService.readLikeBoardQWithPage(principal.getUser(), page, size);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponse<>(
+                "좋아요 게시글 조회 성공 (QueryDSL) 🎉",
                 HttpStatus.OK.value(),
                 responseDtoList));
     }
@@ -83,7 +94,21 @@ public class LikeController {
         List<CommentResponseDto> responseDtoList = likeService.readLikeComment(principal.getUser());
 
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResponse<>(
-                "좋아요 게시글 조회 성공 🎉",
+                "좋아요 댓글 조회 성공 🎉",
+                HttpStatus.OK.value(),
+                responseDtoList));
+    }
+
+    @GetMapping("/comments/likes/Q")
+    public ResponseEntity<CommonResponse<List<CommentResponseDto>>> readLikeCommentQ(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+
+        List<CommentResponseDto> responseDtoList = likeService.readLikeCommentQWithPage(principal.getUser(), page, size);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResponse<>(
+                "좋아요 댓글 조회 성공 (QueryDSL) 🎉",
                 HttpStatus.OK.value(),
                 responseDtoList));
     }

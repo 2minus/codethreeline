@@ -1,6 +1,7 @@
 package sparta.code3line.domain.like.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import sparta.code3line.common.exception.CustomException;
 import sparta.code3line.common.exception.ErrorCode;
@@ -49,7 +50,9 @@ public class LikeService {
                 .board(board)
                 .build();
 
-        likeBoard = likeBoardRepository.save(likeBoard);
+        likeBoardRepository.save(likeBoard);
+        board.updateLikesCount();
+        boardRepository.save(board);
         return new LikeResponseDto(likeBoard);
 
     }
@@ -66,6 +69,20 @@ public class LikeService {
         return boards;
     }
 
+    public List<BoardResponseDto> readLikeBoardQWithPage (User user, int page, int size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        List<BoardResponseDto> response = new ArrayList<>();
+        List<LikeBoard> likeBoards = likeBoardRepository.getLikeBoardsbyUserId(user.getId(), pageRequest.getOffset(), pageRequest.getPageSize());
+
+        for (LikeBoard likeBoard : likeBoards) {
+            response.add(new BoardResponseDto(likeBoard.getBoard()));
+        }
+
+        return response;
+    }
+
     public LikeResponseDto deleteLikeBoard(Long id, User user) {
 
         Board board = boardRepository.findById(id).orElseThrow(
@@ -77,6 +94,8 @@ public class LikeService {
         );
 
         likeBoardRepository.delete(likeBoard);
+        board.updateLikesCount();
+        boardRepository.save(board);
         return new LikeResponseDto(likeBoard);
 
     }
@@ -100,7 +119,9 @@ public class LikeService {
                 .comment(comment)
                 .build();
 
-        likeComment = likeCommentRepository.save(likeComment);
+        likeCommentRepository.save(likeComment);
+        comment.updateLikesCount();
+        commentRepository.save(comment);
         return new LikeResponseDto(likeComment);
 
     }
@@ -118,6 +139,20 @@ public class LikeService {
 
     }
 
+    public List<CommentResponseDto> readLikeCommentQWithPage(User user, int page, int size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        List<CommentResponseDto> response = new ArrayList<>();
+        List<LikeComment> likeComments = likeCommentRepository.getLikeCommentsbyUserId(user.getId(), pageRequest.getOffset(), pageRequest.getPageSize());
+
+        for (LikeComment likeComment : likeComments) {
+            response.add(new CommentResponseDto(likeComment.getComment()));
+        }
+
+        return response;
+    }
+
     public LikeResponseDto deleteLikeComment(Long id, User user) {
 
         Comment comment = commentRepository.findById(id).orElseThrow(
@@ -129,6 +164,8 @@ public class LikeService {
         );
 
         likeCommentRepository.delete(likeComment);
+        comment.updateLikesCount();
+        commentRepository.save(comment);
         return new LikeResponseDto(likeComment);
 
     }

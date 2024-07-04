@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface LikeBoardRepositoryQuery {
 
-    List<LikeBoard> findFetchBoardsbyUserId(Long userId);
-
+    List<LikeBoard> getLikeBoardsbyUserId(Long userId, long offset, int pagesize);
 }

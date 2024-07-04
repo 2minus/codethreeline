@@ -1,5 +1,7 @@
 package sparta.code3line.domain.like.repository;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import sparta.code3line.common.exception.CustomException;
@@ -19,16 +21,20 @@ public class LikeBoardRepositoryImpl implements LikeBoardRepositoryQuery {
     private final UserRepository userRepository;
 
     @Override
-    public List<LikeBoard> findFetchBoardsbyUserId(Long userId) {
+    public List<LikeBoard> getLikeBoardsbyUserId(Long userId, long offset, int pagesize) {
 
         User user = userRepository.findUserByUserId(userId).orElseThrow(
                 ()-> new CustomException(ErrorCode.USER_DIFFERENT)
         );
 
-        return jpaQueryFactory.select(likeBoard)
-                .from(likeBoard)
+        OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, likeBoard.createdAt);
+
+        return jpaQueryFactory.selectFrom(likeBoard)
                 .where(likeBoard.user.eq(user))
                 .leftJoin(likeBoard.board).fetchJoin()
+                .offset(offset)
+                .limit(pagesize)
+                .orderBy(orderSpecifier)
                 .fetch();
     }
 }
