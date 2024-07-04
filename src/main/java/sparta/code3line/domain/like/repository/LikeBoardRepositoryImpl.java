@@ -27,7 +27,7 @@ public class LikeBoardRepositoryImpl implements LikeBoardRepositoryQuery {
                 ()-> new CustomException(ErrorCode.USER_DIFFERENT)
         );
 
-        OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, likeBoard.createdAt);
+        OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, likeBoard.board.createdAt);
 
         return jpaQueryFactory.selectFrom(likeBoard)
                 .where(likeBoard.user.eq(user))

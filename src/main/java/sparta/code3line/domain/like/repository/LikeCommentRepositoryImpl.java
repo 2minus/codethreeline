@@ -12,7 +12,6 @@ import sparta.code3line.domain.user.repository.UserRepository;
 
 import java.util.List;
 
-import static sparta.code3line.domain.like.entity.QLikeBoard.likeBoard;
 import static sparta.code3line.domain.like.entity.QLikeComment.likeComment;
 
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class LikeCommentRepositoryImpl implements LikeCommentRepositoryQuery {
                 () -> new CustomException(ErrorCode.USER_DIFFERENT)
         );
 
-        OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, likeBoard.createdAt);
+        OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, likeComment.comment.createdAt);
 
         return jpaQueryFactory.select(likeComment)
                 .from(likeComment)
