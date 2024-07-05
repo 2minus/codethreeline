@@ -52,6 +52,30 @@ public class BoardService {
 
     }
 
+    public List<BoardResponseDto> getFollowBoard(User user, Long offset) {
+
+        List<Board> boards = boardRepository.getfollowingBoard(user.getId(), offset);
+        List<BoardResponseDto> response = new ArrayList<>();
+
+        for (Board board : boards) {
+            response.add(new BoardResponseDto(board));
+        }
+
+        return response;
+    }
+
+    public List<BoardResponseDto> getFollowBoardOrderByName(User user, Long offset) {
+
+        List<Board> boards = boardRepository.getfollowingBoardOrderByName(user.getId(), offset);
+        List<BoardResponseDto> response = new ArrayList<>();
+
+        for (Board board : boards) {
+            response.add(new BoardResponseDto(board));
+        }
+
+        return response;
+    }
+
     // 게시글 추가 메서드.
     public BoardResponseDto addBoard(
             User user,

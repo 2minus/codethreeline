@@ -1,6 +1,7 @@
 package sparta.code3line.domain.board.controller;
 
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import sparta.code3line.common.CommonResponse;
 import sparta.code3line.domain.board.dto.BoardRequestDto;
 import sparta.code3line.domain.board.dto.BoardResponseDto;
 import sparta.code3line.domain.board.dto.BoardUpdateRequestDto;
+import sparta.code3line.domain.board.entity.SortType;
 import sparta.code3line.domain.board.service.BoardService;
 import sparta.code3line.security.UserPrincipal;
 
@@ -109,6 +111,33 @@ public class BoardController {
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(commonResponse);
+
+    }
+
+
+    @GetMapping("/board/follow")
+    public ResponseEntity<CommonResponse<List<BoardResponseDto>>> getFollowBoard (
+            @RequestParam("page") long page,
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Nullable @RequestParam String type
+            ) {
+
+        SortType sortType = SortType.bySort(type);
+        List<BoardResponseDto> result;
+
+        if(sortType.getSortType().equals("name")){
+            result = boardService.getFollowBoardOrderByName(principal.getUser(), page);
+        } else {
+            result = boardService.getFollowBoard(principal.getUser(), page);
+        }
+
+        CommonResponse<List<BoardResponseDto>> response = new CommonResponse<>(
+                "팔로잉 게시글 조회 완료.",
+                HttpStatus.OK.value(),
+                result
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 

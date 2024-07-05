@@ -1,6 +1,7 @@
 package sparta.code3line.domain.follow.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import sparta.code3line.domain.follow.entity.Follow;
 
 import java.util.List;

@@ -17,10 +17,12 @@ public class Follow extends Timestamp {
     @Column(name = "follow_id", nullable = false)
     private Long id;
 
+    // 상대
     @ManyToOne
     @JoinColumn(name = "following_user_id")
     private User following;
 
+    // 사용자
     @ManyToOne
     @JoinColumn(name = "follower_user_id")
     private User follower;

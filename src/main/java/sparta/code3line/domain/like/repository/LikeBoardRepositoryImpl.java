@@ -5,7 +5,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import sparta.code3line.domain.like.entity.LikeBoard;
-import sparta.code3line.domain.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ import static sparta.code3line.domain.like.entity.QLikeBoard.likeBoard;
 public class LikeBoardRepositoryImpl implements LikeBoardRepositoryQuery {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final UserRepository userRepository;
 
     @Override
     public List<LikeBoard> getLikeBoardsbyUserId(Long userId, long offset, int pagesize) {
