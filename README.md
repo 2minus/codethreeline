@@ -394,11 +394,116 @@
 <details>
 <summary> 🏆 </summary>
 
-- [ ]  **팔로워 TOP 10 목록 조회기능 추가**
+- [X]  **팔로워 TOP 10 목록 조회기능 추가**
   - 팔로워를 가장 많이 보유한 상위 10명의 프로필 정보 목록을 조회합니다.
   - 정렬 없이 10명의 프로필 정보가 모두 나오게 합니다.
   - 프로필 정보와 함께 몇명의 팔로워를 가지고 있는지 출력해줍니다.
 
+> 🛠️ 쿼리문의 응답에 팔로워의 수를 받기위해 Dto 객체를 생성
+
+```java
+// TopFollowerResponseDto.java
+@Data
+public class TopFollowerResponseDto {
+    private Long userId;
+    private Integer followerCount;
+
+    @QueryProjection
+    public TopFollowerResponseDto(Long userId, Integer followerCount) {
+        this.userId = userId;
+        this.followerCount = followerCount;
+    }
+}
+```
+> 🛠️dto 객체에 사용자 ID와 그 사용자의 팔로워 수를 담아 반환하도록 `QueryDSL` 작성
+```java
+// FollowRepositoryImpl.java
+@Override
+    public List<TopFollowerResponseDto> getTopFollower() {
+
+        OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, follow.count());
+
+        return jpaQueryFactory.select(new QTopFollowerResponseDto(
+                        user.id,
+                        follow.count().intValue()
+                ))
+                .from(user)
+                .leftJoin(follow).on(follow.following.eq(user)).fetchJoin()
+                .groupBy(user.id)
+                .orderBy(orderSpecifier)
+                .limit(10)
+                .fetch();
+    }
+```
+> 👩‍💻응답 내용
+```json
+{
+  "msg": "팔로우 랭킹 조회 성공 🎉",
+  "status": 200,
+  "result": [
+    {
+      "nickname": "임열",
+      "profileImg": null,
+      "email": "user10@email.com",
+      "followerCount": 9
+    },
+    {
+      "nickname": "장아홉",
+      "profileImg": null,
+      "email": "user9@email.com",
+      "followerCount": 8
+    },
+    {
+      "nickname": "윤여덟",
+      "profileImg": null,
+      "email": "user8@email.com",
+      "followerCount": 7
+    },
+    {
+      "nickname": "조일곱",
+      "profileImg": null,
+      "email": "user7@email.com",
+      "followerCount": 6
+    },
+    {
+      "nickname": "강여섯",
+      "profileImg": null,
+      "email": "user6@email.com",
+      "followerCount": 5
+    },
+    {
+      "nickname": "정다섯",
+      "profileImg": null,
+      "email": "user5@email.com",
+      "followerCount": 4
+    },
+    {
+      "nickname": "최넷",
+      "profileImg": null,
+      "email": "user4@email.com",
+      "followerCount": 3
+    },
+    {
+      "nickname": "박셋",
+      "profileImg": null,
+      "email": "user3@email.com",
+      "followerCount": 2
+    },
+    {
+      "nickname": "이둘",
+      "profileImg": null,
+      "email": "user2@email.com",
+      "followerCount": 1
+    },
+    {
+      "nickname": "김하나",
+      "profileImg": null,
+      "email": "user1@email.com",
+      "followerCount": 0
+    }
+  ]
+}
+```
 
 - [ ]  **팔로워 게시글 목록 조회 기능에 필터 추가**
   - 팔로워 게시글 목록 조회 기능에 작성자 필터 기능을 추가합니다.
