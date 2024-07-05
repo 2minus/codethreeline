@@ -4,12 +4,14 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import sparta.code3line.domain.like.entity.LikeBoard;
 
 import java.util.List;
 
 import static sparta.code3line.domain.like.entity.QLikeBoard.likeBoard;
 
+@Repository
 @RequiredArgsConstructor
 public class LikeBoardRepositoryImpl implements LikeBoardRepositoryQuery {
 

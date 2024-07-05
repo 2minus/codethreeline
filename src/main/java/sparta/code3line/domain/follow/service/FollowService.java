@@ -3,10 +3,15 @@ package sparta.code3line.domain.follow.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sparta.code3line.common.exception.CustomException;
+import sparta.code3line.domain.follow.dto.TopFollowerProfileResponseDto;
+import sparta.code3line.domain.follow.dto.TopFollowerResponseDto;
 import sparta.code3line.domain.follow.entity.Follow;
 import sparta.code3line.domain.follow.repository.FollowRepository;
 import sparta.code3line.domain.user.entity.User;
 import sparta.code3line.domain.user.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static sparta.code3line.common.exception.ErrorCode.*;
 
@@ -50,6 +55,18 @@ public class FollowService {
 
         followRepository.delete(follow);
 
+    }
+
+    public List<TopFollowerProfileResponseDto> getTopFollowers() {
+
+        List<TopFollowerProfileResponseDto> result = new ArrayList<>();
+        List<TopFollowerResponseDto> followCount = followRepository.getTopFollower();
+
+        for (TopFollowerResponseDto ranker : followCount) {
+            result.add(new TopFollowerProfileResponseDto(findUser(ranker.getUserId()), ranker.getFollowerCount()));
+        }
+
+        return result;
     }
 
     // 사용자 조회

@@ -5,6 +5,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import sparta.code3line.domain.board.entity.Board;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 import static sparta.code3line.domain.board.entity.QBoard.board;
 import static sparta.code3line.domain.follow.entity.QFollow.follow;
 
+@Repository
 @RequiredArgsConstructor
 public class BoardRepositoryImpl implements BoardRepositoryQuery {
 

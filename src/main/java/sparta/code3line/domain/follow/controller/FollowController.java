@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import sparta.code3line.common.CommonResponse;
 import sparta.code3line.domain.follow.dto.FollowRequestDto;
 import sparta.code3line.domain.follow.dto.FollowResponseDto;
+import sparta.code3line.domain.follow.dto.TopFollowerProfileResponseDto;
 import sparta.code3line.domain.follow.service.FollowService;
 import sparta.code3line.domain.user.entity.User;
 import sparta.code3line.security.UserPrincipal;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -55,6 +57,18 @@ public class FollowController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<CommonResponse<List<TopFollowerProfileResponseDto>>> getTopFollower() {
+
+        CommonResponse<List<TopFollowerProfileResponseDto>> response = new CommonResponse<>(
+                "팔로우 랭킹 조회 성공 🎉",
+                HttpStatus.OK.value(),
+                followService.getTopFollowers()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

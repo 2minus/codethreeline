@@ -4,6 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import sparta.code3line.common.exception.CustomException;
 import sparta.code3line.common.exception.ErrorCode;
 import sparta.code3line.domain.like.entity.LikeComment;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static sparta.code3line.domain.like.entity.QLikeComment.likeComment;
 
+@Repository
 @RequiredArgsConstructor
 public class LikeCommentRepositoryImpl implements LikeCommentRepositoryQuery {
 

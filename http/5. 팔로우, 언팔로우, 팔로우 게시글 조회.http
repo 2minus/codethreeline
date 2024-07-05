@@ -31,7 +31,7 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "username": "username1",
+  "username": "username9",
   "password": "passWord123!"
 }
 
@@ -46,7 +46,7 @@ Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 {
-  "following_user_id": 3
+  "following_user_id": 10
 }
 
 ### 5-2. 팔로우 조회
@@ -70,5 +70,10 @@ Authorization: Bearer {{access_token}}
 
 ### 5-4. 팔로우 게시글 조회
 GET http://localhost:8080/board/follow-name?page=0
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 5-5.팔로우 랭킹 조회
+GET http://localhost:8080/follows/top
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
