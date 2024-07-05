@@ -13,8 +13,8 @@
 > 
 >  ✨***추가 구현 기능***✨
 > - [X]  **✨팔로우 기능 추가**
-> - [ ]  **✨팔로워 게시글 목록 조회기능 추가**
-> - [ ]  **✨팔로워 게시글 목록 조회 기능에 정렬 기준 추가**
+> - [X]  **✨팔로워 게시글 목록 조회기능 추가**
+> - [X]  **✨팔로워 게시글 목록 조회 기능에 정렬 기준 추가**
 > 
 > 
 > 🏆 ***명예의 전당***🏆
@@ -243,9 +243,22 @@
 
     }
 ```
+```json
+{
+  "msg": "팔로우 성공 🎉",
+  "status": 200,
+  "result": {
+    "createdAt": "2024-07-05 09:41:51",
+    "modifiedAt": "2024-07-05 09:41:51",
+    "following_user_id": 3,
+    "follower_user_id": 1
+  }
+}
+```
 
 
-- [ ]  **팔로워 게시글 목록 조회기능 추가**
+
+- [X]  **팔로워 게시글 목록 조회기능 추가**
   - 자신이 팔로우 하고 있는 유저들의 게시글만 목록으로 조회 할 수 있습니다.
   - 응답정보는 기존 게시글 목록 조회기능 응답정보와 동일합니다.
   - 기본 정렬은 **생성일자 기준으로 최신순**으로 정렬합니다.
@@ -253,11 +266,125 @@
     - 페이지네이션하여 각 페이지 당 게시물 데이터가 5개씩 나오게 합니다.
 
 
-- [ ]  **팔로워 게시글 목록 조회 기능에 정렬 기준 추가**
+- [X]  **팔로워 게시글 목록 조회 기능에 정렬 기준 추가**
   - 팔로워 게시글 목록 조회 기능에 작성자명 기준 정렬기능을 추가합니다.
   - 응답정보는 기존 게시글 목록 조회기능 응답정보와 동일합니다.
   - 페이지네이션
     - 페이지네이션하여 각 페이지 당 게시물 데이터가 5개씩 나오게 합니다.
+```java
+// BoardRepositoryImpl.java
+@Override
+    public List<Board> getfollowingBoardOrderByName(Long userId, long offset) {
+        // 생성일자 정렬
+        // OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, board.createdAt);
+        // 작성자 정렬
+        OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(Order.DESC, board.user.nickname);
+
+        return jpaQueryFactory.select(board)
+                .from(board)
+                .where(
+                        JPAExpressions.select(follow)
+                                .from(follow)
+                                .where(follow.follower.id.eq(userId)
+                                                .and (follow.following.id.eq(board.user.id)))
+                                .exists()
+                )
+                .groupBy(board.id)
+                .offset(offset)
+                .orderBy(orderSpecifier)
+                .limit(5) // 페이지 당 제한이 걸려있으므로 하드코딩 해버림
+                .fetch();
+    }
+}
+```
+> 생성일자 순 정렬
+```json 
+{
+  "msg": "팔로잉 게시글 조회 완료.",
+  "status": 200,
+  "result": [
+    {
+      "nickname": "이둘",
+      "boardId": 8,
+      "title": "더 신선한 제목",
+      "contents": "더 신선한 내용",
+      "likeCount": 0
+    },
+    {
+      "nickname": "이둘",
+      "boardId": 7,
+      "title": "신선한 제목",
+      "contents": "신선한 내용",
+      "likeCount": 0
+    },
+    {
+      "nickname": "박셋",
+      "boardId": 6,
+      "title": "신선한 제목",
+      "contents": "신선한 내용",
+      "likeCount": 1
+    },
+    {
+      "nickname": "이둘",
+      "boardId": 5,
+      "title": "재미없는 제목",
+      "contents": "재미없는 내용",
+      "likeCount": 1
+    },
+    {
+      "nickname": "이둘",
+      "boardId": 4,
+      "title": "따라하는 제목",
+      "contents": "그냥 내용",
+      "likeCount": 0
+    }
+  ]
+}
+```
+> 작성자 명 정렬
+```json
+{
+  "msg": "팔로잉 게시글 조회 완료.",
+  "status": 200,
+  "result": [
+    {
+      "nickname": "이둘",
+      "boardId": 4,
+      "title": "따라하는 제목",
+      "contents": "그냥 내용",
+      "likeCount": 0
+    },
+    {
+      "nickname": "이둘",
+      "boardId": 5,
+      "title": "재미없는 제목",
+      "contents": "재미없는 내용",
+      "likeCount": 1
+    },
+    {
+      "nickname": "이둘",
+      "boardId": 7,
+      "title": "신선한 제목",
+      "contents": "신선한 내용",
+      "likeCount": 0
+    },
+    {
+      "nickname": "이둘",
+      "boardId": 8,
+      "title": "더 신선한 제목",
+      "contents": "더 신선한 내용",
+      "likeCount": 0
+    },
+    {
+      "nickname": "박셋",
+      "boardId": 6,
+      "title": "신선한 제목",
+      "contents": "신선한 내용",
+      "likeCount": 1
+    }
+  ]
+}
+```
 
 </details>
 
